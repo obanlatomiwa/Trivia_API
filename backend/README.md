@@ -72,9 +72,13 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions'
+GET '/categories/<int:category_id>/questions'
+POST '/add'
+POST '/questions'
+POST '/quizzes'
+DELETE '/questions/<int:question_id>'
+
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -86,6 +90,42 @@ GET '/categories'
 '4' : "History",
 '5' : "Entertainment",
 '6' : "Sports"}
+
+GET '/questions'
+- Fetches either all questions or questions based on categories
+- Request Arguments: selection, if selection is not given it is None
+- Returns: An object with four keys: questions, total_questions, current_category, and categories
+
+
+GET '/categories/<int:category_id>/questions'
+- Retrieves questions by category.
+- Request Arguments: category_id
+- Returns: An object with four keys: success, questions, current_category and questions_number
+
+
+POST '/add'
+- Takes in four data fields --question, answer, difficulty, and category-- from FormView.js and adds to database a new trivia question. If question or answer is left blank an error is raised.
+- Request Arguments: None
+- Returns: An object with a single key, success, value is True if question is created.
+{'success': True}
+
+POST '/questions'
+- Takes in a data field, searchTerm, and displays questions which include that searchTerm.
+- Request Arguments: None
+- Returns: an object with three keys: questions, search_term, result_number.
+
+POST '/quizzes'
+- Plays a trivia game by fetching questions and checking answers given against them.
+- Request Arguments: None
+- Returns: An object with three keys: quiz_category, question and previous_questions
+
+
+
+DELETE '/questions/<int:question_id>'
+- Deletes a question based on question_id
+- Request Arguments: question_id
+- Returns: An object with a single key, success, value is True if deletion is completed.
+{'success': True}
 
 ```
 

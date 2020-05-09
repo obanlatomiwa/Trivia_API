@@ -1,6 +1,7 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_cors import CORS
 import random
 
@@ -18,11 +19,12 @@ def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
+  CORS(app)
   
   '''
   @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs (DONE)
   '''
-  cors = CORS(app, resources={r"/api/*" : {"origins": "*"}})
+  cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
   '''
   @TODO: Use the after_request decorator to set Access-Control-Allow (DONE)
@@ -99,7 +101,7 @@ def create_app(test_config=None):
     if question_to_delete is None:
       abort(404)
     question_to_delete.delete()
-    return jsonify({'success': True, 'deleted_question_id': question_id}), 200
+    return jsonify({'success': True}), 200
 
   '''
   @TODO: 
@@ -131,7 +133,8 @@ def create_app(test_config=None):
           Question.question.ilike(f'%{search}%'))
       results_number = selection.count()
       current_questions = [question.format() for question in selection]
-      return jsonify({'success': True,'questions': current_questions,'search_term': search,'results_number': results_number}), 200
+      return jsonify({'questions': current_questions,'search_term': search,'results_number': results_number}), 200
+      
     else:
       question = request.json['question']
       answer = request.json['answer']
@@ -142,7 +145,7 @@ def create_app(test_config=None):
         abort(400)
       new_question = Question(question, answer, category, difficulty)
       new_question.insert()
-      return jsonify({'success': True, 'added_question_id': new_question.id}), 200
+      return jsonify({'success': True}), 200
 
 
   '''
@@ -183,7 +186,7 @@ def create_app(test_config=None):
     if category['id'] == 0:  # id 0 means all categories
       questions_whole = [question.format() for question in Question.query.all()]
       if len(questions_whole) == len(previous_questions):
-        return jsonify({'success': True, 'quiz_category': category,'question': None,'previous_questions': previous_questions}), 200
+        return jsonify({'quiz_category': category,'question': None,'previous_questions': previous_questions}), 200
       if len(previous_questions) > 0:  # if there were previous questions
         s = set(previous_questions)
         questions = [question['id'] for question in questions_whole]
@@ -192,17 +195,17 @@ def create_app(test_config=None):
         current_question = Question.query.filter(
             Question.id == chosen_question_id).one_or_none(
         ).format()  # gets formatted question of that id
-        return jsonify({'success': True, 'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
+        return jsonify({'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
       else:
           # if there were no previous questions, we can make it random
           current_question = random.choice(questions_whole)
-          return jsonify({'success': True, 'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
+          return jsonify({'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
 
     else:
       questions_in_category_whole = [question.format() for question in Question.query.filter(Question.category == category['id'])]
       if len(questions_in_category_whole) == len(
         previous_questions):
-        return jsonify({'success': True, 'quiz_category': category, 'question': None, 'previous_questions': previous_questions}), 200
+        return jsonify({'quiz_category': category, 'question': None, 'previous_questions': previous_questions}), 200
       if len(previous_questions) > 0:  # if there were previous questions
           s = set(previous_questions)
           questions_in_this_category = [question['id'] for question in questions_in_category_whole]
@@ -210,12 +213,12 @@ def create_app(test_config=None):
               x for x in questions_in_this_category if x not in s]
           chosen_question_id = random.choice(questions_to_choose_from)
           current_question = Question.query.filter(Question.id == chosen_question_id).one_or_none().format()  # gets formatted question of that id
-          return jsonify({'success': True, 'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
+          return jsonify({'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
 
       else:
           # if there were no previous questions, we can make it random
           current_question = random.choice(questions_in_category_whole)
-          return jsonify({'success': True, 'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
+          return jsonify({'quiz_category': category, 'question': current_question, 'previous_questions': previous_questions}), 200
 
 
 
@@ -242,7 +245,5 @@ def create_app(test_config=None):
   return app
 
 
-  if __name__ == "__main__":
-        app.run(debug=True)
       
   
