@@ -32,7 +32,7 @@ def create_app(test_config=None):
   @app.after_request
   def after_request(response):
     response.headers.add('Access-Control-Allow-Origin','http://localhost:3000')
-    response.headers.add('Access-Control-Allow-Methods','GET,POST,OPTIONS,DELETE')
+    response.headers.add('Access-Control-Allow-Methods','GET,POST,OPTIONS,DELETE,OPTIONS')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
     response.headers.add('Access-Control-Allow-Credentials', 'true')
     return response
@@ -101,7 +101,7 @@ def create_app(test_config=None):
     if question_to_delete is None:
       abort(404)
     question_to_delete.delete()
-    return jsonify({'success': True}), 200
+    return jsonify({'success': True, 'deleted_question_id': question_id}), 200
 
   '''
   @TODO: 
@@ -145,7 +145,7 @@ def create_app(test_config=None):
         abort(400)
       new_question = Question(question, answer, category, difficulty)
       new_question.insert()
-      return jsonify({'success': True}), 200
+      return jsonify({'success': True, 'added_question_id': new_question.id}), 200
 
 
   '''

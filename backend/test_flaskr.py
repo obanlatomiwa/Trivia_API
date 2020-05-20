@@ -15,7 +15,8 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://postgres:123456@{}/{}".format('localhost:5432', self.database_name)
+        self.database_path = "postgres://postgres:123456@{}/{}".format(
+            'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
         self.new_question = {
             'question': 'Is this a test question?',
@@ -74,7 +75,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['added_question_id'])
+        self.assertTrue(data['questions'])
 
     def test_add_question_without_required_fields_400(self):
         res = self.client().post('/questions', json={
@@ -164,7 +165,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], True) 
         self.assertTrue(data['question'])
         self.assertEqual(data['quiz_category'], {'id': 0, 'type': 'click'})
         self.assertEqual(data['previous_questions'], [])
@@ -177,7 +178,7 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
+        self.assertEqual(data['success'], True) 
         self.assertTrue(data['question'])
         self.assertEqual(data['quiz_category'], {'id': 2, 'type': 'Art'})
         self.assertEqual(data['previous_questions'], [])
