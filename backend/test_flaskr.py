@@ -31,7 +31,7 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
         """Executed after reach test"""
         pass
@@ -177,7 +177,6 @@ class TriviaTestCase(unittest.TestCase):
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
         self.assertTrue(data['question'])
         self.assertEqual(data['quiz_category'], {'id': 2, 'type': 'Art'})
         self.assertEqual(data['previous_questions'], [])
